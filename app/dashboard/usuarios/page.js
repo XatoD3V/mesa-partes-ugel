@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabaseBrowser } from "@/lib/supabaseClient";
 import { ROLES, iniciales } from "@/lib/constants";
-import { Search, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Search, AlertCircle, CheckCircle2, UserPlus, X } from "lucide-react";
 
 export default function UsuariosPage() {
   const supabase = supabaseBrowser();
@@ -14,6 +14,18 @@ export default function UsuariosPage() {
   const [guardandoId, setGuardandoId] = useState(null);
   const [ok, setOk] = useState("");
   const [error, setError] = useState("");
+
+  const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  const [creando, setCreando] = useState(false);
+  const [errorCrear, setErrorCrear] = useState("");
+  const [nuevoUsuario, setNuevoUsuario] = useState({
+    nombres: "",
+    apellidos: "",
+    email: "",
+    password: "",
+    rol: "jefe_oficina",
+    oficina_id: "",
+  });
 
   async function cargar() {
     setCargando(true);
@@ -42,6 +54,31 @@ export default function UsuariosPage() {
     setTimeout(() => setOk(""), 2000);
   }
 
+  async function crearUsuario(e) {
+    e.preventDefault();
+    setErrorCrear("");
+    setCreando(true);
+
+    const res = await fetch("/api/admin/crear-usuario", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(nuevoUsuario),
+    });
+    const data = await res.json();
+    setCreando(false);
+
+    if (!res.ok) {
+      setErrorCrear(data.error || "No se pudo crear el usuario.");
+      return;
+    }
+
+    setMostrarFormulario(false);
+    setNuevoUsuario({ nombres: "", apellidos: "", email: "", password: "", rol: "jefe_oficina", oficina_id: "" });
+    setOk("Usuario creado correctamente");
+    setTimeout(() => setOk(""), 2500);
+    cargar();
+  }
+
   const filtrados = usuarios.filter((u) =>
     `${u.nombres} ${u.apellidos} ${u.email}`.toLowerCase().includes(busqueda.toLowerCase())
   );
@@ -53,11 +90,88 @@ export default function UsuariosPage() {
           <h1 className="font-display text-2xl font-semibold text-tinta-950">Usuarios</h1>
           <p className="mt-1 text-sm text-tinta-700">Asigna rol y oficina al personal de la UGEL.</p>
         </div>
-        <div className="relative w-full sm:w-64">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-tinta-500" />
-          <input className="input-legajo pl-9" placeholder="Buscar usuario..." value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />
+        <div className="flex items-center gap-3">
+          <div className="relative w-full sm:w-64">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-tinta-500" />
+            <input className="input-legajo pl-9" placeholder="Buscar usuario..." value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />
+          </div>
+          <button onClick={() => setMostrarFormulario(true)} className="btn-sello shrink-0">
+            <UserPlus size={16} /> Crear usuario
+          </button>
         </div>
       </div>
+
+      {mostrarFormulario && (
+        <div className="fixed inset-0 z-30 flex items-center justify-center bg-tinta-950/40 p-4">
+          <div className="card-folio w-full max-w-md p-6">
+            <div className="flex items-center justify-between">
+              <h2 className="font-display text-lg font-semibold text-tinta-950">Crear cuenta de personal</h2>
+              <button onClick={() => setMostrarFormulario(false)} className="text-tinta-500 hover:text-tinta-950">
+                <X size={18} />
+              </button>
+            </div>
+            <p className="mt-1 text-sm text-tinta-700">
+              La cuenta queda lista de inmediato, con correo confirmado, rol y oficina asignados.
+            </p>
+
+            <form onSubmit={crearUsuario} className="mt-5 space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="label-legajo">Nombres</label>
+                  <input required className="input-legajo" value={nuevoUsuario.nombres} onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, nombres: e.target.value })} />
+                </div>
+                <div>
+                  <label className="label-legajo">Apellidos</label>
+                  <input required className="input-legajo" value={nuevoUsuario.apellidos} onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, apellidos: e.target.value })} />
+                </div>
+              </div>
+              <div>
+                <label className="label-legajo">Correo electrónico</label>
+                <input type="email" required className="input-legajo" value={nuevoUsuario.email} onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, email: e.target.value })} />
+              </div>
+              <div>
+                <label className="label-legajo">Contraseña temporal</label>
+                <input type="text" required minLength={6} className="input-legajo" placeholder="Mínimo 6 caracteres" value={nuevoUsuario.password} onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, password: e.target.value })} />
+                <p className="mt-1 text-xs text-tinta-600">Compártela con el trabajador; podrá cambiarla luego.</p>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="label-legajo">Rol</label>
+                  <select className="input-legajo" value={nuevoUsuario.rol} onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, rol: e.target.value })}>
+                    {Object.entries(ROLES).map(([valor, etiqueta]) => (
+                      <option key={valor} value={valor}>{etiqueta}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="label-legajo">Oficina</label>
+                  <select
+                    disabled={nuevoUsuario.rol === "externo"}
+                    className="input-legajo"
+                    value={nuevoUsuario.oficina_id}
+                    onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, oficina_id: e.target.value })}
+                  >
+                    <option value="">Sin oficina</option>
+                    {oficinas.map((o) => (
+                      <option key={o.id} value={o.id}>{o.nombre}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {errorCrear && (
+                <div className="flex items-start gap-2 rounded-md bg-sello-100 p-3 text-sm text-sello">
+                  <AlertCircle size={16} className="mt-0.5 shrink-0" /> {errorCrear}
+                </div>
+              )}
+
+              <button type="submit" disabled={creando} className="btn-primario w-full">
+                {creando ? "Creando..." : "Crear cuenta"}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
 
       {ok && (
         <div className="mt-4 flex items-center gap-2 rounded-md bg-salvia-100 p-3 text-sm text-salvia">

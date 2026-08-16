@@ -87,6 +87,7 @@ create table if not exists public.derivaciones (
   oficina_destino_id uuid not null references public.oficinas(id),
   derivado_por uuid not null references public.perfiles(id),
   observacion text,
+  archivos jsonb not null default '[]'::jsonb,
   created_at timestamptz not null default now()
 );
 
@@ -159,6 +160,7 @@ create trigger trg_before_insert_documento
 create or replace function public.fn_after_insert_documento()
 returns trigger
 language plpgsql
+security definer set search_path = public
 as $$
 begin
   insert into public.documento_historial (documento_id, estado, oficina_id, usuario_id, comentario)
@@ -233,7 +235,8 @@ create or replace function public.derivar_documento(
   p_documento_id uuid,
   p_oficina_destino_id uuid,
   p_observacion text default null,
-  p_nuevo_estado estado_documento default 'derivado'
+  p_nuevo_estado estado_documento default 'derivado',
+  p_archivos jsonb default '[]'::jsonb
 )
 returns void
 language plpgsql
@@ -255,8 +258,8 @@ begin
     raise exception 'Solo puede derivar documentos asignados a su oficina';
   end if;
 
-  insert into public.derivaciones (documento_id, oficina_origen_id, oficina_destino_id, derivado_por, observacion)
-  values (p_documento_id, v_oficina_origen, p_oficina_destino_id, auth.uid(), p_observacion);
+  insert into public.derivaciones (documento_id, oficina_origen_id, oficina_destino_id, derivado_por, observacion, archivos)
+  values (p_documento_id, v_oficina_origen, p_oficina_destino_id, auth.uid(), p_observacion, coalesce(p_archivos, '[]'::jsonb));
 
   update public.documentos
     set oficina_actual_id = p_oficina_destino_id,
@@ -396,6 +399,13 @@ create policy "historial_select" on public.documento_historial for select
     )
   );
 
+drop policy if exists "historial_insert" on public.documento_historial;
+create policy "historial_insert" on public.documento_historial for insert
+  with check (
+    usuario_id = auth.uid()
+    or public.mi_rol() in ('admin','mesa_partes','jefe_oficina')
+  );
+
 -- NOTIFICACIONES: cada quien ve solo las suyas
 drop policy if exists "notif_select" on public.notificaciones;
 create policy "notif_select" on public.notificaciones for select using (usuario_id = auth.uid());
@@ -446,7 +456,7 @@ $$;
 
 grant execute on function public.consultar_expediente(text) to anon, authenticated;
 grant execute on function public.consultar_expediente_historial(text) to anon, authenticated;
-grant execute on function public.derivar_documento(uuid, uuid, text, estado_documento) to authenticated;
+grant execute on function public.derivar_documento(uuid, uuid, text, estado_documento, jsonb) to authenticated;
 grant execute on function public.cambiar_estado_documento(uuid, estado_documento, text) to authenticated;
 
 -- ============================================================================

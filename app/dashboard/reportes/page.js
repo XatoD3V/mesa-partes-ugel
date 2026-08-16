@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabaseServer";
 import { ESTADOS } from "@/lib/constants";
+import ExportarReportePDF from "@/components/ExportarReportePDF";
 import { Building2 } from "lucide-react";
 
 export default async function ReportesPage() {
@@ -33,8 +34,18 @@ export default async function ReportesPage() {
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-semibold text-tinta-950">Reportes</h1>
-      <p className="mt-1 text-sm text-tinta-700">Vista general del trámite documentario de la UGEL.</p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="font-display text-2xl font-semibold text-tinta-950">Reportes</h1>
+          <p className="mt-1 text-sm text-tinta-700">Vista general del trámite documentario de la UGEL.</p>
+        </div>
+        <ExportarReportePDF
+          total={total}
+          porEstado={porEstado}
+          porOficina={porOficina}
+          nombreUgel={process.env.NEXT_PUBLIC_NOMBRE_UGEL || "UGEL"}
+        />
+      </div>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-4">
         <div className="card-folio p-5">

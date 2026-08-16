@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabaseBrowser } from "@/lib/supabaseClient";
 import { Building2, UserPlus, AlertCircle, CheckCircle2 } from "lucide-react";
+import Captcha from "@/components/Captcha";
 
 export default function RegistroPage() {
   const router = useRouter();
@@ -20,6 +21,7 @@ export default function RegistroPage() {
   const [error, setError] = useState("");
   const [ok, setOk] = useState(false);
   const [cargando, setCargando] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState("");
 
   function update(campo, valor) {
     setForm((f) => ({ ...f, [campo]: valor }));
@@ -28,6 +30,12 @@ export default function RegistroPage() {
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
+
+    if (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && !captchaToken) {
+      setError("Marca la verificación 'No soy un robot' antes de continuar.");
+      return;
+    }
+
     setCargando(true);
 
     const { data, error: signUpError } = await supabase.auth.signUp({
@@ -35,6 +43,7 @@ export default function RegistroPage() {
       password: form.password,
       options: {
         data: { nombres: form.nombres, apellidos: form.apellidos },
+        captchaToken: captchaToken || undefined,
       },
     });
 
@@ -135,6 +144,8 @@ export default function RegistroPage() {
               <label className="label-legajo">Contraseña</label>
               <input type="password" required minLength={6} className="input-legajo" value={form.password} onChange={(e) => update("password", e.target.value)} />
             </div>
+
+            <Captcha onVerify={setCaptchaToken} onExpire={() => setCaptchaToken("")} />
 
             {error && (
               <div className="flex items-start gap-2 rounded-md bg-sello-100 p-3 text-sm text-sello">

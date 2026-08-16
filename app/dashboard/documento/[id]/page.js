@@ -1,5 +1,5 @@
 "use client";
- 
+
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -18,12 +18,12 @@ import {
   UploadCloud,
   X,
 } from "lucide-react";
- 
+
 export default function DetalleDocumentoPage() {
   const { id } = useParams();
   const router = useRouter();
   const supabase = supabaseBrowser();
- 
+
   const [perfil, setPerfil] = useState(null);
   const [documento, setDocumento] = useState(null);
   const [historial, setHistorial] = useState([]);
@@ -32,20 +32,20 @@ export default function DetalleDocumentoPage() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
   const [enviando, setEnviando] = useState(false);
- 
+
   const [oficinaDestino, setOficinaDestino] = useState("");
   const [observacion, setObservacion] = useState("");
   const [archivosDerivacion, setArchivosDerivacion] = useState([]);
   const [subiendoArchivos, setSubiendoArchivos] = useState(false);
- 
+
   const cargar = useCallback(async () => {
     const {
       data: { user },
     } = await supabase.auth.getUser();
- 
+
     const { data: perfilData } = await supabase.from("perfiles").select("*").eq("id", user.id).single();
     setPerfil(perfilData);
- 
+
     const { data: doc } = await supabase
       .from("documentos")
       .select(
@@ -54,14 +54,14 @@ export default function DetalleDocumentoPage() {
       .eq("id", id)
       .single();
     setDocumento(doc);
- 
+
     const { data: hist } = await supabase
       .from("documento_historial")
       .select("*, oficina:oficina_id(nombre), usuario:usuario_id(nombres, apellidos)")
       .eq("documento_id", id)
       .order("created_at", { ascending: true });
     setHistorial(hist || []);
- 
+
     const { data: deriv } = await supabase
       .from("derivaciones")
       .select(
@@ -70,13 +70,13 @@ export default function DetalleDocumentoPage() {
       .eq("documento_id", id)
       .order("created_at", { ascending: true });
     setDerivaciones((deriv || []).filter((d) => Array.isArray(d.archivos) && d.archivos.length > 0));
- 
+
     const { data: ofs } = await supabase.from("oficinas").select("id, nombre").eq("activo", true).order("orden");
     setOficinas(ofs || []);
- 
+
     setCargando(false);
   }, [id]);
- 
+
   useEffect(() => {
     cargar();
     const canal = supabase
@@ -86,12 +86,12 @@ export default function DetalleDocumentoPage() {
       .subscribe();
     return () => supabase.removeChannel(canal);
   }, [id, cargar]);
- 
+
   async function derivar(e) {
     e.preventDefault();
     setError("");
     setEnviando(true);
- 
+
     try {
       // Sube cada archivo de sustento seleccionado al bucket 'documentos'
       const archivosSubidos = [];
@@ -100,7 +100,7 @@ export default function DetalleDocumentoPage() {
         const {
           data: { user },
         } = await supabase.auth.getUser();
- 
+
         for (const archivo of archivosDerivacion) {
           const ruta = `derivaciones/${id}/${Date.now()}-${archivo.name}`;
           const { error: uploadError } = await supabase.storage.from("documentos").upload(ruta, archivo);
@@ -110,7 +110,7 @@ export default function DetalleDocumentoPage() {
         }
         setSubiendoArchivos(false);
       }
- 
+
       const { error: rpcError } = await supabase.rpc("derivar_documento", {
         p_documento_id: id,
         p_oficina_destino_id: oficinaDestino,
@@ -119,7 +119,7 @@ export default function DetalleDocumentoPage() {
         p_archivos: archivosSubidos,
       });
       if (rpcError) throw rpcError;
- 
+
       setObservacion("");
       setOficinaDestino("");
       setArchivosDerivacion([]);
@@ -131,7 +131,7 @@ export default function DetalleDocumentoPage() {
       setSubiendoArchivos(false);
     }
   }
- 
+
   async function cambiarEstado(nuevoEstado, comentario) {
     setError("");
     setEnviando(true);
@@ -144,29 +144,29 @@ export default function DetalleDocumentoPage() {
     if (error) return setError(error.message);
     cargar();
   }
- 
+
   if (cargando) return <p className="text-sm text-tinta-600">Cargando expediente...</p>;
   if (!documento) return <p className="text-sm text-tinta-600">No se encontró el expediente.</p>;
- 
+
   const esPersonalUgel = ["mesa_partes", "jefe_oficina", "admin"].includes(perfil?.rol);
   const puedeActuar =
     perfil?.rol === "admin" ||
     perfil?.rol === "mesa_partes" ||
     (perfil?.rol === "jefe_oficina" && perfil?.oficina_id === documento.oficina_actual_id);
- 
+
   return (
     <div className="mx-auto max-w-4xl">
       <button onClick={() => router.back()} className="mb-4 flex items-center gap-1.5 text-sm text-tinta-700 hover:text-tinta-950">
         <ArrowLeft size={15} /> Volver
       </button>
- 
+
       <div className="card-folio flex flex-col gap-5 p-6 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="font-mono text-xs text-tinta-600">{documento.codigo_expediente}</p>
           <h1 className="mt-1 font-display text-xl font-semibold text-tinta-950">{documento.asunto}</h1>
           <p className="mt-1 text-sm text-tinta-700">{documento.tipo_documento} · {documento.numero_folios} folio(s)</p>
           {documento.descripcion && <p className="mt-3 text-sm text-tinta-800">{documento.descripcion}</p>}
- 
+
           {documento.archivo_url && (
             <a
               href={documento.archivo_url}
@@ -177,7 +177,7 @@ export default function DetalleDocumentoPage() {
               <Paperclip size={15} /> {documento.archivo_nombre || "Ver archivo adjunto"}
             </a>
           )}
- 
+
           {esPersonalUgel && (
             <div className="mt-4 rounded-md bg-papel-200/50 p-3 text-xs text-tinta-700">
               <p><strong>Remitente:</strong> {documento.emisor?.nombres} {documento.emisor?.apellidos}</p>
@@ -191,7 +191,7 @@ export default function DetalleDocumentoPage() {
           <EstadoBadge estado={documento.estado} />
         </div>
       </div>
- 
+
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]">
         {/* Línea de tiempo */}
         <div className="card-folio p-6">
@@ -241,7 +241,7 @@ export default function DetalleDocumentoPage() {
             </div>
           )}
         </div>
- 
+
         {/* Acciones (solo personal UGEL) */}
         {esPersonalUgel && (
           <div className="space-y-4">
@@ -267,19 +267,19 @@ export default function DetalleDocumentoPage() {
                     value={observacion}
                     onChange={(e) => setObservacion(e.target.value)}
                   />
- 
+
                   <div>
                     <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-tinta-700">
                       Archivos de sustento (opcional)
                     </label>
                     <label className="flex cursor-pointer items-center gap-2 rounded-md border border-dashed border-tinta-800/30 bg-papel-200/40 px-3 py-3 text-xs text-tinta-700 hover:bg-papel-200">
                       <UploadCloud size={16} />
-                      Agregar uno o varios archivos (PDF, imágenes)
+                      Agregar archivos (PDF, imágenes, Word, Excel, ZIP...)
                       <input
                         type="file"
                         multiple
                         className="hidden"
-                        accept=".pdf,.jpg,.jpeg,.png"
+                        accept=".pdf,.jpg,.jpeg,.png,.gif,.webp,.doc,.docx,.xls,.xlsx,.csv,.ppt,.pptx,.zip,.rar,.7z"
                         onChange={(e) =>
                           setArchivosDerivacion((prev) => [...prev, ...Array.from(e.target.files || [])])
                         }
@@ -305,12 +305,12 @@ export default function DetalleDocumentoPage() {
                       </ul>
                     )}
                   </div>
- 
+
                   <button type="submit" disabled={enviando} className="btn-primario w-full">
                     <Send size={15} /> {subiendoArchivos ? "Subiendo archivos..." : "Derivar"}
                   </button>
                 </form>
- 
+
                 <div className="card-folio space-y-2 p-5">
                   <h3 className="font-display text-sm font-semibold text-tinta-950">Actualizar estado</h3>
                   <button onClick={() => cambiarEstado("en_proceso")} disabled={enviando} className="btn-secundario w-full !justify-start">
@@ -331,7 +331,7 @@ export default function DetalleDocumentoPage() {
           </div>
         )}
       </div>
- 
+
       {error && (
         <div className="mt-4 flex items-start gap-2 rounded-md bg-sello-100 p-3 text-sm text-sello">
           <AlertCircle size={16} className="mt-0.5 shrink-0" />

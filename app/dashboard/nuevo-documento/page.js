@@ -204,11 +204,11 @@ export default function NuevoDocumentoPage() {
           <label className="label-legajo">Archivo adjunto (PDF o imagen, opcional)</label>
           <label className="flex cursor-pointer items-center gap-3 rounded-md border border-dashed border-tinta-800/30 bg-papel-200/40 px-4 py-4 text-sm text-tinta-700 hover:bg-papel-200">
             <UploadCloud size={18} />
-            {archivo ? archivo.name : "Selecciona un archivo desde tu equipo"}
+            {archivo ? archivo.name : "Selecciona un archivo (PDF, imagen, Word, Excel, ZIP...)"}
             <input
               type="file"
               className="hidden"
-              accept=".pdf,.jpg,.jpeg,.png"
+              accept=".pdf,.jpg,.jpeg,.png,.gif,.webp,.doc,.docx,.xls,.xlsx,.csv,.ppt,.pptx,.zip,.rar,.7z"
               onChange={(e) => setArchivo(e.target.files?.[0] || null)}
             />
           </label>
