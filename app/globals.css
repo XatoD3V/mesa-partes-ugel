@@ -81,7 +81,7 @@
   /* "Reflejo de carga": placeholder con destello animado, para
      estados de carga en vez de texto plano "Cargando...". */
   .skeleton {
-    @apply relative overflow-hidden rounded-md bg-tinta-900/[0.07];
+    @apply relative overflow-hidden rounded-md bg-tinta-800/[0.07];
   }
   .skeleton::after {
     content: "";
