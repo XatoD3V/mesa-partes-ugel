@@ -18,8 +18,14 @@ export default async function DashboardLayout({ children }) {
 
   if (!perfil) redirect("/login");
 
+  const { data: config } = await supabase
+    .from("configuracion_sitio")
+    .select("favicon_url")
+    .eq("id", 1)
+    .single();
+
   return (
-    <DashboardShell perfil={perfil} userId={user.id}>
+    <DashboardShell perfil={perfil} userId={user.id} logoUrl={config?.favicon_url || null}>
       {children}
     </DashboardShell>
   );

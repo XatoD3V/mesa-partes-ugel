@@ -11,6 +11,8 @@ export default async function Home() {
     .select("*")
     .eq("activo", true)
     .order("created_at", { ascending: false });
+  const { data: config } = await supabase.from("configuracion_sitio").select("favicon_url").eq("id", 1).single();
+  const logoUrl = config?.favicon_url || null;
 
   return (
     <main className="min-h-screen">
@@ -31,9 +33,14 @@ export default async function Home() {
       <header className="border-b border-tinta-900/10">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-tinta-900 text-papel-100">
-              <Building2 size={20} />
-            </div>
+            {logoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={logoUrl} alt="Logo" className="h-10 w-10 rounded-md object-cover" />
+            ) : (
+              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-tinta-900 text-papel-100">
+                <Building2 size={20} />
+              </div>
+            )}
             <div className="leading-tight">
               <p className="font-display text-base font-semibold text-tinta-950">{nombreUgel}</p>
               <p className="text-xs text-tinta-700">Mesa de Partes Virtual</p>

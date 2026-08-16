@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { supabaseBrowser } from "@/lib/supabaseClient";
 import { Building2, LogIn, AlertCircle } from "lucide-react";
+import SiteLogoLink from "@/components/SiteLogoLink";
+import Captcha from "@/components/Captcha";
 
 export default function LoginPage() {
   return (
@@ -22,12 +24,23 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [cargando, setCargando] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState("");
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
+
+    if (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && !captchaToken) {
+      setError("Marca la verificación 'No soy un robot' antes de continuar.");
+      return;
+    }
+
     setCargando(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+      options: { captchaToken: captchaToken || undefined },
+    });
     setCargando(false);
     if (error) {
       setError(
@@ -44,12 +57,7 @@ function LoginForm() {
   return (
     <main className="flex min-h-screen items-center justify-center px-6 py-12">
       <div className="w-full max-w-sm">
-        <Link href="/" className="mb-8 flex items-center justify-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-tinta-900 text-papel-100">
-            <Building2 size={18} />
-          </div>
-          <span className="font-display font-semibold text-tinta-950">Mesa de Partes</span>
-        </Link>
+        <SiteLogoLink />
 
         <div className="card-folio p-7">
           <h1 className="font-display text-xl font-semibold text-tinta-950">Iniciar sesión</h1>
@@ -78,6 +86,8 @@ function LoginForm() {
                 placeholder="••••••••"
               />
             </div>
+
+            <Captcha onVerify={setCaptchaToken} onExpire={() => setCaptchaToken("")} />
 
             {error && (
               <div className="flex items-start gap-2 rounded-md bg-sello-100 p-3 text-sm text-sello">

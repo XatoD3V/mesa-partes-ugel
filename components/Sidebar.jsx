@@ -16,7 +16,7 @@ import {
   Settings,
 } from "lucide-react";
 
-export default function Sidebar({ perfil, onNavigate }) {
+export default function Sidebar({ perfil, onNavigate, logoUrl }) {
   const pathname = usePathname();
   const router = useRouter();
   const supabase = supabaseBrowser();
@@ -45,9 +45,14 @@ export default function Sidebar({ perfil, onNavigate }) {
   return (
     <aside className="flex h-full w-64 flex-col border-r border-tinta-900/10 bg-papel-100">
       <div className="flex items-center gap-2.5 px-5 py-5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-md bg-tinta-900 text-papel-100">
-          <Building2 size={18} />
-        </div>
+        {logoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={logoUrl} alt="Logo" className="h-9 w-9 shrink-0 rounded-md object-cover" />
+        ) : (
+          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-tinta-900 text-papel-100">
+            <Building2 size={18} />
+          </div>
+        )}
         <div className="leading-tight">
           <p className="font-display text-sm font-semibold text-tinta-950">Mesa de Partes</p>
           <p className="text-[11px] text-tinta-600">{process.env.NEXT_PUBLIC_NOMBRE_UGEL || "UGEL"}</p>

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { supabaseBrowser } from "@/lib/supabaseClient";
 import { Building2, UserPlus, AlertCircle, CheckCircle2 } from "lucide-react";
 import Captcha from "@/components/Captcha";
+import SiteLogoLink from "@/components/SiteLogoLink";
 
 export default function RegistroPage() {
   const router = useRouter();
@@ -102,12 +103,7 @@ export default function RegistroPage() {
   return (
     <main className="flex min-h-screen items-center justify-center px-6 py-12">
       <div className="w-full max-w-md">
-        <Link href="/" className="mb-8 flex items-center justify-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-tinta-900 text-papel-100">
-            <Building2 size={18} />
-          </div>
-          <span className="font-display font-semibold text-tinta-950">Mesa de Partes</span>
-        </Link>
+        <SiteLogoLink />
 
         <div className="card-folio p-7">
           <h1 className="font-display text-xl font-semibold text-tinta-950">Crear cuenta</h1>

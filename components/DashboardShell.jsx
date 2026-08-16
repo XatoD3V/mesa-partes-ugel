@@ -6,7 +6,7 @@ import { Menu, X } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 import NotificacionesBell from "@/components/NotificacionesBell";
 
-export default function DashboardShell({ perfil, userId, children }) {
+export default function DashboardShell({ perfil, userId, logoUrl, children }) {
   const [abierto, setAbierto] = useState(false);
   const pathname = usePathname();
 
@@ -28,7 +28,7 @@ export default function DashboardShell({ perfil, userId, children }) {
           abierto ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <Sidebar perfil={perfil} onNavigate={() => setAbierto(false)} />
+        <Sidebar perfil={perfil} onNavigate={() => setAbierto(false)} logoUrl={logoUrl} />
       </div>
 
       <div className="min-w-0 flex-1">
