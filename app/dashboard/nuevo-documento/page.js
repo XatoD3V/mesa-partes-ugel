@@ -83,6 +83,13 @@ export default function NuevoDocumentoPage() {
 
       if (insertError) throw insertError;
 
+      // Avisa por correo al personal de la oficina que lo recibe (no bloquea el flujo si falla)
+      fetch("/api/notificaciones/enviar-correo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ documento_id: doc.id, tipo: "recibido" }),
+      }).catch(() => {});
+
       // Si el usuario indicó una oficina final distinta a Mesa de Partes,
       // se registra como la derivación inicial sugerida.
       if (form.oficina_destino_id && mesaPartes && form.oficina_destino_id !== mesaPartes.id) {

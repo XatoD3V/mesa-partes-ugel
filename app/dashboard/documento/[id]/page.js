@@ -120,6 +120,13 @@ export default function DetalleDocumentoPage() {
       });
       if (rpcError) throw rpcError;
 
+      // Avisa por correo al personal de la oficina destino (no bloquea el flujo si falla)
+      fetch("/api/notificaciones/enviar-correo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ documento_id: id, tipo: "derivado" }),
+      }).catch(() => {});
+
       setObservacion("");
       setOficinaDestino("");
       setArchivosDerivacion([]);
@@ -142,6 +149,14 @@ export default function DetalleDocumentoPage() {
     });
     setEnviando(false);
     if (error) return setError(error.message);
+
+    // Avisa por correo al ciudadano que envió el documento (no bloquea el flujo si falla)
+    fetch("/api/notificaciones/enviar-correo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ documento_id: id, tipo: "estado", estado: nuevoEstado }),
+    }).catch(() => {});
+
     cargar();
   }
 
