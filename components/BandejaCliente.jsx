@@ -132,7 +132,7 @@ export default function BandejaCliente({ perfil }) {
         )}
         {!cargando && filtrados.length === 0 && (
           <div className="flex flex-col items-center gap-2 px-5 py-14 text-center">
-            <Inbox className="text-tinta-400" size={28} />
+            <Inbox className="text-tinta-500" size={28} />
             <p className="text-sm text-tinta-600">No hay expedientes con este filtro.</p>
           </div>
         )}

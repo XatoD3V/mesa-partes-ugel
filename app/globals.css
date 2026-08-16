@@ -29,24 +29,24 @@
     @apply pointer-events-none fixed inset-0 -z-10 overflow-hidden;
   }
   .ambiente span {
-    @apply absolute rounded-full opacity-[0.16] blur-3xl;
+    @apply absolute rounded-full opacity-[0.10] blur-3xl;
   }
 
   /* Tarjeta tipo "vidrio esmerilado": translúcida, con blur y un
      reflejo sutil en el borde superior, sin sacrificar contraste de texto. */
   .card-folio {
-    @apply relative overflow-hidden rounded-xl border border-white/60
-           bg-papel-100/70 shadow-glass backdrop-blur-xl
+    @apply relative overflow-hidden rounded-xl border border-white/50
+           bg-papel-100/75 shadow-glass backdrop-blur-lg
            transition-all duration-300 ease-out
            animate-fade-up;
   }
   .card-folio::before {
     content: "";
     @apply pointer-events-none absolute inset-x-0 top-0 h-px
-           bg-gradient-to-r from-transparent via-white/80 to-transparent;
+           bg-gradient-to-r from-transparent via-white/70 to-transparent;
   }
   .card-folio:hover {
-    @apply -translate-y-0.5 shadow-folio;
+    @apply -translate-y-0.5;
   }
 
   .btn-primario {

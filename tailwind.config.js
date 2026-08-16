@@ -45,7 +45,7 @@ module.exports = {
       },
       boxShadow: {
         folio: "0 1px 2px rgba(14,34,56,0.06), 0 8px 24px -12px rgba(14,34,56,0.18)",
-        glass: "0 1px 1px rgba(255,255,255,0.5) inset, 0 1px 2px rgba(14,34,56,0.04), 0 12px 32px -14px rgba(14,34,56,0.22)",
+        glass: "0 1px 1px rgba(255,255,255,0.4) inset, 0 1px 2px rgba(14,34,56,0.03), 0 8px 22px -12px rgba(14,34,56,0.16)",
         glow: "0 8px 20px -6px rgba(178,58,46,0.35)",
         "glow-tinta": "0 8px 22px -8px rgba(14,34,56,0.4)",
       },
