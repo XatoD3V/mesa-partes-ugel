@@ -47,7 +47,7 @@ export default async function ReportesPage() {
         />
       </div>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-4">
+      <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <div className="card-folio p-5">
           <p className="text-xs uppercase tracking-wide text-tinta-600">Total de expedientes</p>
           <p className="mt-1 font-display text-3xl font-semibold text-tinta-950">{total}</p>

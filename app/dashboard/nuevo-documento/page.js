@@ -29,6 +29,7 @@ export default function NuevoDocumentoPage() {
       .from("oficinas")
       .select("id, nombre, codigo")
       .eq("activo", true)
+      .eq("visible_externos", true)
       .order("orden")
       .then(({ data }) => setOficinas(data || []));
   }, []);
@@ -61,9 +62,13 @@ export default function NuevoDocumentoPage() {
         archivo_nombre = archivo.name;
       }
 
-      // Mesa de Partes es el punto de entrada: todo documento nuevo cae primero ahí,
-      // salvo que el remitente elija directamente la oficina destino final.
-      const mesaPartes = oficinas.find((o) => o.codigo === "MESA_PARTES");
+      // Mesa de Partes siempre es el punto de entrada, sin importar si está marcada
+      // como visible para el selector de externos.
+      const { data: mesaPartes } = await supabase
+        .from("oficinas")
+        .select("id")
+        .eq("codigo", "MESA_PARTES")
+        .single();
 
       const { data: doc, error: insertError } = await supabase
         .from("documentos")

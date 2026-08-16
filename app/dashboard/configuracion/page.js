@@ -12,6 +12,8 @@ import {
   CheckCircle2,
   AlertCircle,
   RotateCcw,
+  Image as ImageIcon,
+  Hash,
 } from "lucide-react";
 
 const FUENTES_DISPONIBLES = ["Inter", "Roboto", "Poppins", "Merriweather", "Nunito", "Source Sans 3"];
@@ -30,7 +32,15 @@ export default function ConfiguracionPage() {
   const [nuevoAviso, setNuevoAviso] = useState({ mensaje: "", tipo: "info" });
 
   // Apariencia
-  const [config, setConfig] = useState({ color_primario: "#152F4A", color_fondo: "#F7F3EA", fuente_body: "Inter" });
+  const [config, setConfig] = useState({
+    color_primario: "#152F4A",
+    color_fondo: "#F7F3EA",
+    fuente_body: "Inter",
+    favicon_url: "",
+    prefijo_expediente: "UGEL",
+  });
+  const [subiendoFavicon, setSubiendoFavicon] = useState(false);
+  const [reiniciandoNumero, setReiniciandoNumero] = useState(false);
 
   // Reinicio total
   const [mostrarReinicio, setMostrarReinicio] = useState(false);
@@ -97,11 +107,37 @@ export default function ConfiguracionPage() {
         color_primario: config.color_primario,
         color_fondo: config.color_fondo,
         fuente_body: config.fuente_body,
+        favicon_url: config.favicon_url || null,
+        prefijo_expediente: config.prefijo_expediente || "UGEL",
         updated_at: new Date().toISOString(),
       })
       .eq("id", 1);
     if (error) return setError(error.message);
     flashOk("Apariencia actualizada. Recarga la página para verla aplicada en todo el sitio.");
+  }
+
+  async function subirFavicon(e) {
+    const archivo = e.target.files?.[0];
+    if (!archivo) return;
+    setSubiendoFavicon(true);
+    setError("");
+    const ruta = `sitio/favicon-${Date.now()}-${archivo.name}`;
+    const { error: uploadError } = await supabase.storage.from("documentos").upload(ruta, archivo);
+    setSubiendoFavicon(false);
+    if (uploadError) return setError(uploadError.message);
+    const { data: pub } = supabase.storage.from("documentos").getPublicUrl(ruta);
+    setConfig((c) => ({ ...c, favicon_url: pub.publicUrl }));
+  }
+
+  async function reiniciarNumeracion() {
+    if (!window.confirm("¿Reiniciar la numeración de expedientes desde 1? Los códigos ya emitidos no cambian, pero el próximo expediente usará el número 1.")) {
+      return;
+    }
+    setReiniciandoNumero(true);
+    const { error } = await supabase.rpc("reiniciar_correlativo_expediente");
+    setReiniciandoNumero(false);
+    if (error) return setError(error.message);
+    flashOk("La numeración de expedientes se reinició a 1.");
   }
 
   // ---- Reinicio total ----
@@ -261,6 +297,48 @@ export default function ConfiguracionPage() {
             Guardar apariencia
           </button>
         </form>
+
+        <div className="mt-6 grid gap-4 border-t border-papel-300 pt-6 sm:grid-cols-2">
+          <div>
+            <label className="label-legajo">Ícono del sitio (favicon)</label>
+            <div className="flex items-center gap-3">
+              {config.favicon_url && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={config.favicon_url} alt="Favicon actual" className="h-9 w-9 rounded border border-papel-300 object-contain" />
+              )}
+              <label className="flex cursor-pointer items-center gap-2 rounded-md border border-dashed border-tinta-800/30 bg-papel-200/40 px-3 py-2.5 text-xs text-tinta-700 hover:bg-papel-200">
+                <ImageIcon size={15} />
+                {subiendoFavicon ? "Subiendo..." : "Cambiar ícono"}
+                <input type="file" accept="image/*" className="hidden" onChange={subirFavicon} />
+              </label>
+            </div>
+            <p className="mt-1 text-xs text-tinta-600">Recomendado: imagen cuadrada (PNG o ICO).</p>
+          </div>
+
+          <div>
+            <label className="label-legajo">Prefijo del código de expediente</label>
+            <div className="flex items-center gap-2">
+              <Hash size={16} className="text-tinta-500" />
+              <input
+                className="input-legajo"
+                value={config.prefijo_expediente}
+                onChange={(e) => setConfig({ ...config, prefijo_expediente: e.target.value.toUpperCase() })}
+                placeholder="UGEL"
+              />
+            </div>
+            <p className="mt-1 text-xs text-tinta-600">
+              Ej: con "UGEL" los códigos salen como UGEL-2026-000123. Guarda con el botón de arriba.
+            </p>
+            <button
+              type="button"
+              onClick={reiniciarNumeracion}
+              disabled={reiniciandoNumero}
+              className="btn-secundario mt-2 !py-1.5 text-xs"
+            >
+              <RotateCcw size={13} /> {reiniciandoNumero ? "Reiniciando..." : "Reiniciar numeración a 1"}
+            </button>
+          </div>
+        </div>
       </section>
 
       {/* Zona de peligro */}

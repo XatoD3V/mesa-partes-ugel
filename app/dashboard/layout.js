@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabaseServer";
-import Sidebar from "@/components/Sidebar";
-import NotificacionesBell from "@/components/NotificacionesBell";
+import DashboardShell from "@/components/DashboardShell";
 
 export default async function DashboardLayout({ children }) {
   const supabase = supabaseServer();
@@ -20,14 +19,8 @@ export default async function DashboardLayout({ children }) {
   if (!perfil) redirect("/login");
 
   return (
-    <div className="flex min-h-screen bg-papel">
-      <Sidebar perfil={perfil} />
-      <div className="flex-1">
-        <header className="flex h-16 items-center justify-end gap-3 border-b border-tinta-900/10 bg-papel-100 px-6">
-          <NotificacionesBell userId={user.id} />
-        </header>
-        <main className="p-6 sm:p-8">{children}</main>
-      </div>
-    </div>
+    <DashboardShell perfil={perfil} userId={user.id}>
+      {children}
+    </DashboardShell>
   );
 }

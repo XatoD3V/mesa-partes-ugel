@@ -17,6 +17,7 @@ import {
   AlertCircle,
   UploadCloud,
   X,
+  Trash2,
 } from "lucide-react";
 
 export default function DetalleDocumentoPage() {
@@ -158,6 +159,22 @@ export default function DetalleDocumentoPage() {
     }).catch(() => {});
 
     cargar();
+  }
+
+  async function eliminarDocumento() {
+    if (
+      !window.confirm(
+        `¿Eliminar definitivamente el expediente ${documento.codigo_expediente}?\n\nSe borrará junto con su historial y derivaciones. Esta acción no se puede deshacer.`
+      )
+    ) {
+      return;
+    }
+    setError("");
+    setEnviando(true);
+    const { error } = await supabase.from("documentos").delete().eq("id", id);
+    setEnviando(false);
+    if (error) return setError(error.message);
+    router.push("/dashboard/bandeja");
   }
 
   if (cargando) return <p className="text-sm text-tinta-600">Cargando expediente...</p>;
@@ -341,6 +358,15 @@ export default function DetalleDocumentoPage() {
                     <Archive size={15} /> Archivar
                   </button>
                 </div>
+
+                {perfil?.rol === "admin" && (
+                  <div className="card-folio border-2 border-sello/30 p-5">
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-sello">Zona de peligro</p>
+                    <button onClick={eliminarDocumento} disabled={enviando} className="btn-sello w-full">
+                      <Trash2 size={15} /> Eliminar expediente
+                    </button>
+                  </div>
+                )}
               </>
             )}
           </div>

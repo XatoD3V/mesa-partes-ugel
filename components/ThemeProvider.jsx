@@ -33,6 +33,16 @@ export default function ThemeProvider() {
           }
           root.style.setProperty("--font-body-override", `"${data.fuente_body}"`);
         }
+
+        if (data.favicon_url) {
+          let icono = document.querySelector('link[rel="icon"]');
+          if (!icono) {
+            icono = document.createElement("link");
+            icono.rel = "icon";
+            document.head.appendChild(icono);
+          }
+          icono.href = data.favicon_url;
+        }
       });
   }, []);
 

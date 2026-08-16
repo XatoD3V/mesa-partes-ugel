@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabaseBrowser } from "@/lib/supabaseClient";
-import { Building2, Plus, AlertCircle, Star, EyeOff, Eye } from "lucide-react";
+import { Building2, Plus, AlertCircle, Star, EyeOff, Eye, Trash2, Users } from "lucide-react";
 
 export default function OficinasPage() {
   const supabase = supabaseBrowser();
@@ -11,6 +11,7 @@ export default function OficinasPage() {
   const [error, setError] = useState("");
   const [nuevo, setNuevo] = useState({ codigo: "", nombre: "", descripcion: "", orden: 100 });
   const [guardando, setGuardando] = useState(false);
+  const [eliminandoId, setEliminandoId] = useState(null);
 
   async function cargar() {
     setCargando(true);
@@ -44,11 +45,35 @@ export default function OficinasPage() {
     cargar();
   }
 
+  async function toggleVisibleExternos(oficina) {
+    await supabase.from("oficinas").update({ visible_externos: !oficina.visible_externos }).eq("id", oficina.id);
+    cargar();
+  }
+
+  async function eliminarOficina(oficina) {
+    if (!window.confirm(`¿Eliminar la oficina "${oficina.nombre}"? Esta acción no se puede deshacer.`)) return;
+    setError("");
+    setEliminandoId(oficina.id);
+    const { error } = await supabase.from("oficinas").delete().eq("id", oficina.id);
+    setEliminandoId(null);
+    if (error) {
+      // Viola una referencia (hay expedientes o usuarios usando esta oficina)
+      setError(
+        error.code === "23503"
+          ? `No se puede eliminar "${oficina.nombre}": todavía tiene expedientes o usuarios asignados. Puedes desactivarla en su lugar.`
+          : error.message
+      );
+      return;
+    }
+    cargar();
+  }
+
   return (
     <div className="mx-auto max-w-3xl">
       <h1 className="font-display text-2xl font-semibold text-tinta-950">Oficinas de la UGEL</h1>
       <p className="mt-1 text-sm text-tinta-700">
-        Recursos Humanos figura como oficina principal (orden 1). Puedes agregar más oficinas o desactivarlas.
+        Recursos Humanos figura como oficina principal (orden 1). "Visible para externos" controla si
+        aparece en el formulario que usan los ciudadanos al enviar un documento.
       </p>
 
       <form onSubmit={crear} className="card-folio mt-6 grid gap-3 p-5 sm:grid-cols-[1fr_1fr_100px_auto]">
@@ -76,9 +101,9 @@ export default function OficinasPage() {
       <div className="card-folio mt-6 p-0">
         {cargando && <p className="px-5 py-8 text-center text-sm text-tinta-600">Cargando...</p>}
         {oficinas.map((o, i) => (
-          <div key={o.id} className="flex items-center justify-between gap-3 border-b border-papel-300 px-5 py-4 last:border-0">
+          <div key={o.id} className="flex flex-col gap-3 border-b border-papel-300 px-5 py-4 last:border-0 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
-              <div className={`flex h-9 w-9 items-center justify-center rounded-md ${i === 0 ? "bg-sello-100 text-sello" : "bg-tinta-100 text-tinta-800"}`}>
+              <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-md ${i === 0 ? "bg-sello-100 text-sello" : "bg-tinta-100 text-tinta-800"}`}>
                 {i === 0 ? <Star size={16} /> : <Building2 size={16} />}
               </div>
               <div>
@@ -88,15 +113,35 @@ export default function OficinasPage() {
                 <p className="font-mono text-xs text-tinta-600">{o.codigo}</p>
               </div>
             </div>
-            <button
-              onClick={() => toggleActivo(o)}
-              className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold ${
-                o.activo ? "bg-salvia-100 text-salvia" : "bg-papel-300 text-tinta-600"
-              }`}
-            >
-              {o.activo ? <Eye size={13} /> : <EyeOff size={13} />}
-              {o.activo ? "Activa" : "Inactiva"}
-            </button>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={() => toggleVisibleExternos(o)}
+                title="Visible para usuarios externos al enviar un documento"
+                className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold ${
+                  o.visible_externos ? "bg-tinta-100 text-tinta-800" : "bg-papel-300 text-tinta-600"
+                }`}
+              >
+                <Users size={13} />
+                {o.visible_externos ? "Visible p/ externos" : "Oculta p/ externos"}
+              </button>
+              <button
+                onClick={() => toggleActivo(o)}
+                className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold ${
+                  o.activo ? "bg-salvia-100 text-salvia" : "bg-papel-300 text-tinta-600"
+                }`}
+              >
+                {o.activo ? <Eye size={13} /> : <EyeOff size={13} />}
+                {o.activo ? "Activa" : "Inactiva"}
+              </button>
+              <button
+                onClick={() => eliminarOficina(o)}
+                disabled={eliminandoId === o.id}
+                title="Eliminar oficina"
+                className="flex h-8 w-8 items-center justify-center rounded-md text-tinta-500 hover:bg-sello-100 hover:text-sello disabled:opacity-50"
+              >
+                <Trash2 size={15} />
+              </button>
+            </div>
           </div>
         ))}
       </div>

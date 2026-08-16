@@ -16,7 +16,7 @@ import {
   Settings,
 } from "lucide-react";
 
-export default function Sidebar({ perfil }) {
+export default function Sidebar({ perfil, onNavigate }) {
   const pathname = usePathname();
   const router = useRouter();
   const supabase = supabaseBrowser();
@@ -43,7 +43,7 @@ export default function Sidebar({ perfil }) {
   }
 
   return (
-    <aside className="flex h-screen w-64 shrink-0 flex-col border-r border-tinta-900/10 bg-papel-100">
+    <aside className="flex h-full w-64 flex-col border-r border-tinta-900/10 bg-papel-100">
       <div className="flex items-center gap-2.5 px-5 py-5">
         <div className="flex h-9 w-9 items-center justify-center rounded-md bg-tinta-900 text-papel-100">
           <Building2 size={18} />
@@ -63,6 +63,7 @@ export default function Sidebar({ perfil }) {
               <Link
                 key={l.href}
                 href={l.href}
+                onClick={onNavigate}
                 className={`flex items-center gap-2.5 rounded-md px-3 py-2.5 text-sm font-medium transition ${
                   activo
                     ? "bg-tinta-900 text-papel-100"

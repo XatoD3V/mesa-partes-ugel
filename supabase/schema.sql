@@ -549,3 +549,53 @@ create policy "config_select" on public.configuracion_sitio for select using (tr
 drop policy if exists "config_admin_write" on public.configuracion_sitio;
 create policy "config_admin_write" on public.configuracion_sitio for update
   using (public.mi_rol() = 'admin') with check (public.mi_rol() = 'admin');
+
+-- ============================================================================
+-- MEJORAS ADICIONALES: oficinas visibles para externos, borrado de expedientes,
+-- favicon personalizado y código de expediente configurable
+-- ============================================================================
+
+-- 1) Permite marcar qué oficinas puede elegir un usuario externo al enviar un documento
+alter table public.oficinas add column if not exists visible_externos boolean not null default true;
+
+-- 2) Permite que un admin elimine expedientes (derivaciones/historial/notificaciones
+--    ligadas se borran solas por las referencias "on delete cascade")
+drop policy if exists "documentos_delete" on public.documentos;
+create policy "documentos_delete" on public.documentos for delete
+  using (public.mi_rol() = 'admin');
+
+-- 3) Favicon personalizado y prefijo del código de expediente
+alter table public.configuracion_sitio add column if not exists favicon_url text;
+alter table public.configuracion_sitio add column if not exists prefijo_expediente text not null default 'UGEL';
+
+-- 4) El código de expediente ahora usa el prefijo configurado por el admin
+create or replace function public.generar_codigo_expediente()
+returns text
+language plpgsql
+as $$
+declare
+  nro bigint;
+  anio text := to_char(now(), 'YYYY');
+  prefijo text;
+begin
+  select coalesce(prefijo_expediente, 'UGEL') into prefijo from public.configuracion_sitio where id = 1;
+  nro := nextval('public.correlativo_expediente');
+  return coalesce(prefijo, 'UGEL') || '-' || anio || '-' || lpad(nro::text, 6, '0');
+end;
+$$;
+
+-- 5) Permite al admin reiniciar la numeración de expedientes desde 1
+create or replace function public.reiniciar_correlativo_expediente()
+returns void
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  if public.mi_rol() <> 'admin' then
+    raise exception 'Solo un administrador puede reiniciar la numeración de expedientes.';
+  end if;
+  alter sequence public.correlativo_expediente restart with 1;
+end;
+$$;
+
+grant execute on function public.reiniciar_correlativo_expediente() to authenticated;
