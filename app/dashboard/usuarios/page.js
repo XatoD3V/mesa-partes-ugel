@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabaseBrowser } from "@/lib/supabaseClient";
 import { ROLES, iniciales } from "@/lib/constants";
-import { Search, AlertCircle, CheckCircle2, UserPlus, X, Trash2 } from "lucide-react";
+import { Search, AlertCircle, CheckCircle2, UserPlus, X, Trash2 } from "@/components/icons";
 
 export default function UsuariosPage() {
   const supabase = supabaseBrowser();

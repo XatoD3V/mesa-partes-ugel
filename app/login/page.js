@@ -4,9 +4,8 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { supabaseBrowser } from "@/lib/supabaseClient";
-import { Building2, LogIn, AlertCircle } from "lucide-react";
+import { Building2, LogIn, AlertCircle } from "@/components/icons";
 import SiteLogoLink from "@/components/SiteLogoLink";
-import Captcha from "@/components/Captcha";
 
 export default function LoginPage() {
   return (
@@ -24,22 +23,15 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [cargando, setCargando] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState("");
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
 
-    if (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && !captchaToken) {
-      setError("Marca la verificación 'No soy un robot' antes de continuar.");
-      return;
-    }
-
     setCargando(true);
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
-      options: { captchaToken: captchaToken || undefined },
     });
     setCargando(false);
     if (error) {
@@ -86,8 +78,6 @@ function LoginForm() {
                 placeholder="••••••••"
               />
             </div>
-
-            <Captcha onVerify={setCaptchaToken} onExpire={() => setCaptchaToken("")} />
 
             {error && (
               <div className="flex items-start gap-2 rounded-md bg-sello-100 p-3 text-sm text-sello">

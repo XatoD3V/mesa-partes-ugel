@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FileText, Search, ShieldCheck, Building2, ArrowRight, Clock, Users, Megaphone, MessageCircle } from "lucide-react";
+import { FileText, Search, ShieldCheck, Building2, ArrowRight, Clock, Users, Megaphone, MessageCircle } from "@/components/icons";
 import { supabaseServer } from "@/lib/supabaseServer";
 
 const nombreUgel = process.env.NEXT_PUBLIC_NOMBRE_UGEL || "UGEL";

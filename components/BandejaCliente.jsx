@@ -5,7 +5,7 @@ import Link from "next/link";
 import { supabaseBrowser } from "@/lib/supabaseClient";
 import EstadoBadge from "@/components/EstadoBadge";
 import { formatoFecha } from "@/lib/constants";
-import { Search, Inbox } from "lucide-react";
+import { Search, Inbox } from "@/components/icons";
 
 const FILTROS = [
   { key: "activos", label: "Activos" },

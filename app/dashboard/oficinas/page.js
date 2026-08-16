@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabaseBrowser } from "@/lib/supabaseClient";
-import { Building2, Plus, AlertCircle, Star, EyeOff, Eye, Trash2, Users } from "lucide-react";
+import { Building2, Plus, AlertCircle, Star, EyeOff, Eye, Trash2, Users } from "@/components/icons";
 
 export default function OficinasPage() {
   const supabase = supabaseBrowser();

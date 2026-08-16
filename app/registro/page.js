@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabaseBrowser } from "@/lib/supabaseClient";
-import { Building2, UserPlus, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Building2, UserPlus, AlertCircle, CheckCircle2 } from "@/components/icons";
 import Captcha from "@/components/Captcha";
 import SiteLogoLink from "@/components/SiteLogoLink";
 

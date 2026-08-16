@@ -12,9 +12,9 @@ import {
   CheckCircle2,
   AlertCircle,
   RotateCcw,
-  Image as ImageIcon,
+  ImageIcon,
   Hash,
-} from "lucide-react";
+} from "@/components/icons";
 
 const FUENTES_DISPONIBLES = ["Inter", "Roboto", "Poppins", "Merriweather", "Nunito", "Source Sans 3"];
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Building2 } from "lucide-react";
+import { Building2 } from "@/components/icons";
 import { supabaseBrowser } from "@/lib/supabaseClient";
 
 export default function SiteLogoLink() {

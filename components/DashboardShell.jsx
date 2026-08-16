@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, X } from "@/components/icons";
 import Sidebar from "@/components/Sidebar";
 import NotificacionesBell from "@/components/NotificacionesBell";
 

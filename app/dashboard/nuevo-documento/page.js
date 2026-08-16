@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabaseClient";
 import { TIPOS_DOCUMENTO } from "@/lib/constants";
-import { UploadCloud, Send, AlertCircle, CheckCircle2 } from "lucide-react";
+import { UploadCloud, Send, AlertCircle, CheckCircle2 } from "@/components/icons";
 
 export default function NuevoDocumentoPage() {
   const supabase = supabaseBrowser();

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { supabaseServer } from "@/lib/supabaseServer";
 import EstadoBadge from "@/components/EstadoBadge";
 import { formatoFecha } from "@/lib/constants";
-import { FileText } from "lucide-react";
+import { FileText } from "@/components/icons";
 
 export default async function MisDocumentosPage() {
   const supabase = supabaseServer();

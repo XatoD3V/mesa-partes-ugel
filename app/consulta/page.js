@@ -5,7 +5,7 @@ import Link from "next/link";
 import { supabaseBrowser } from "@/lib/supabaseClient";
 import EstadoBadge from "@/components/EstadoBadge";
 import { formatoFecha } from "@/lib/constants";
-import { Building2, Search, FileWarning } from "lucide-react";
+import { Building2, Search, FileWarning } from "@/components/icons";
 import SiteLogoLink from "@/components/SiteLogoLink";
 
 export default function ConsultaPage() {

@@ -18,7 +18,7 @@ import {
   UploadCloud,
   X,
   Trash2,
-} from "lucide-react";
+} from "@/components/icons";
 
 export default function DetalleDocumentoPage() {
   const { id } = useParams();

@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabaseServer";
 import { ESTADOS } from "@/lib/constants";
 import ExportarReportePDF from "@/components/ExportarReportePDF";
-import { Building2 } from "lucide-react";
+import { Building2 } from "@/components/icons";
 
 export default async function ReportesPage() {
   const supabase = supabaseServer();

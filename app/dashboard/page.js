@@ -2,7 +2,7 @@ import Link from "next/link";
 import { supabaseServer } from "@/lib/supabaseServer";
 import EstadoBadge from "@/components/EstadoBadge";
 import { formatoFecha } from "@/lib/constants";
-import { FileText, Inbox, ArrowRight, Clock3 } from "lucide-react";
+import { FileText, Inbox, ArrowRight, Clock3 } from "@/components/icons";
 
 export default async function DashboardHome() {
   const supabase = supabaseServer();

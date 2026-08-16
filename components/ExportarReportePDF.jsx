@@ -1,6 +1,6 @@
 "use client";
 
-import { FileDown } from "lucide-react";
+import { FileDown } from "@/components/icons";
 import { ESTADOS } from "@/lib/constants";
 
 export default function ExportarReportePDF({ total, porEstado, porOficina, nombreUgel }) {

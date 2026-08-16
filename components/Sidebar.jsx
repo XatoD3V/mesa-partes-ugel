@@ -14,7 +14,7 @@ import {
   LogOut,
   FolderClock,
   Settings,
-} from "lucide-react";
+} from "@/components/icons";
 
 export default function Sidebar({ perfil, onNavigate, logoUrl }) {
   const pathname = usePathname();

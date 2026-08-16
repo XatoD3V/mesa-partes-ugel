@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabaseBrowser } from "@/lib/supabaseClient";
 import { formatoFecha } from "@/lib/constants";
-import { Bell } from "lucide-react";
+import { Bell } from "@/components/icons";
 
 export default function NotificacionesBell({ userId }) {
   const supabase = supabaseBrowser();
