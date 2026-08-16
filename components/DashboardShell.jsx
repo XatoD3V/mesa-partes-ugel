@@ -32,7 +32,7 @@ export default function DashboardShell({ perfil, userId, logoUrl, children }) {
       </div>
 
       <div className="min-w-0 flex-1">
-        <header className="flex h-16 items-center justify-between gap-3 border-b border-tinta-900/10 bg-papel-100 px-4 sm:px-6">
+        <header className="flex h-16 items-center justify-between gap-3 border-b border-white/50 bg-papel-100/60 px-4 backdrop-blur-xl sm:px-6">
           <button
             onClick={() => setAbierto((v) => !v)}
             className="flex h-9 w-9 items-center justify-center rounded-md text-tinta-800 hover:bg-tinta-100 md:hidden"

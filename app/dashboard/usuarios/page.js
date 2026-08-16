@@ -210,7 +210,17 @@ export default function UsuariosPage() {
       )}
 
       <div className="card-folio mt-5 p-0">
-        {cargando && <p className="px-5 py-10 text-center text-sm text-tinta-600">Cargando...</p>}
+        {cargando && (
+          <div className="space-y-3 p-5">
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="flex items-center gap-3">
+                <div className="skeleton h-9 w-9 shrink-0 rounded-full" />
+                <div className="skeleton h-4 flex-1" />
+                <div className="skeleton h-4 w-20" />
+              </div>
+            ))}
+          </div>
+        )}
         {filtrados.map((u) => (
           <div key={u.id} className="flex flex-col gap-3 border-b border-papel-300 px-5 py-4 last:border-0 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">

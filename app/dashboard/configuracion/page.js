@@ -162,7 +162,17 @@ export default function ConfiguracionPage() {
     router.push("/login");
   }
 
-  if (cargando || !esAdmin) return <p className="text-sm text-tinta-600">Cargando...</p>;
+  if (cargando || !esAdmin)
+    return (
+      <div className="mx-auto max-w-3xl space-y-4">
+        <div className="skeleton h-6 w-48" />
+        <div className="card-folio space-y-3 p-6">
+          <div className="skeleton h-4 w-full" />
+          <div className="skeleton h-4 w-5/6" />
+          <div className="skeleton h-10 w-40" />
+        </div>
+      </div>
+    );
 
   return (
     <div className="mx-auto max-w-3xl space-y-8">

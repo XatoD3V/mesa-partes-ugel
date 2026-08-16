@@ -43,13 +43,13 @@ export default function Sidebar({ perfil, onNavigate, logoUrl }) {
   }
 
   return (
-    <aside className="flex h-full w-64 flex-col border-r border-tinta-900/10 bg-papel-100">
+    <aside className="flex h-full w-64 flex-col border-r border-white/50 bg-papel-100/70 backdrop-blur-xl">
       <div className="flex items-center gap-2.5 px-5 py-5">
         {logoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={logoUrl} alt="Logo" className="h-9 w-9 shrink-0 rounded-md object-cover" />
         ) : (
-          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-tinta-900 text-papel-100">
+          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-tinta-900 text-papel-100 shadow-glow-tinta">
             <Building2 size={18} />
           </div>
         )}
@@ -69,10 +69,10 @@ export default function Sidebar({ perfil, onNavigate, logoUrl }) {
                 key={l.href}
                 href={l.href}
                 onClick={onNavigate}
-                className={`flex items-center gap-2.5 rounded-md px-3 py-2.5 text-sm font-medium transition ${
+                className={`flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
                   activo
-                    ? "bg-tinta-900 text-papel-100"
-                    : "text-tinta-800 hover:bg-tinta-100"
+                    ? "bg-tinta-900 text-papel-100 shadow-glow-tinta"
+                    : "text-tinta-800 hover:translate-x-0.5 hover:bg-white/50"
                 }`}
               >
                 <l.icon size={17} />
@@ -82,7 +82,7 @@ export default function Sidebar({ perfil, onNavigate, logoUrl }) {
           })}
       </nav>
 
-      <div className="border-t border-tinta-900/10 p-4">
+      <div className="border-t border-white/50 p-4">
         <div className="flex items-center gap-2.5">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-tinta-800 text-xs font-semibold text-papel-100">
             {iniciales(perfil.nombres, perfil.apellidos)}

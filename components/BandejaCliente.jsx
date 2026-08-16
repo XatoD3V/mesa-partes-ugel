@@ -118,7 +118,18 @@ export default function BandejaCliente({ perfil }) {
           <span>Fecha</span>
         </div>
 
-        {cargando && <p className="px-5 py-10 text-center text-sm text-tinta-600">Cargando...</p>}
+        {cargando && (
+          <div className="space-y-3 p-5">
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="flex items-center gap-4">
+                <div className="skeleton h-4 w-28" />
+                <div className="skeleton h-4 w-20" />
+                <div className="skeleton h-4 flex-1" />
+                <div className="skeleton h-4 w-16" />
+              </div>
+            ))}
+          </div>
+        )}
         {!cargando && filtrados.length === 0 && (
           <div className="flex flex-col items-center gap-2 px-5 py-14 text-center">
             <Inbox className="text-tinta-400" size={28} />
