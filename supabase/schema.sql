@@ -506,3 +506,46 @@ insert into public.oficinas (codigo, nombre, descripcion, orden, es_mesa_partes)
   ('ESCALAFON', 'Escalafón', 'Legajos y hoja de vida del personal', 11, false),
   ('SECRETARIA_GENERAL', 'Secretaría General', 'Trámite documentario y archivo central', 12, false)
 on conflict (codigo) do nothing;
+
+-- ============================================================================
+-- AVISOS / BANNERS de la plataforma principal (gestionados por el admin)
+-- ============================================================================
+create table if not exists public.avisos (
+  id uuid primary key default gen_random_uuid(),
+  mensaje text not null,
+  tipo text not null default 'info', -- 'info' | 'urgente'
+  activo boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+alter table public.avisos enable row level security;
+
+drop policy if exists "avisos_select" on public.avisos;
+create policy "avisos_select" on public.avisos for select using (true);
+
+drop policy if exists "avisos_admin_write" on public.avisos;
+create policy "avisos_admin_write" on public.avisos for all
+  using (public.mi_rol() = 'admin') with check (public.mi_rol() = 'admin');
+
+-- ============================================================================
+-- CONFIGURACIÓN DE APARIENCIA del sitio (fila única, editable solo por admin)
+-- ============================================================================
+create table if not exists public.configuracion_sitio (
+  id int primary key default 1,
+  color_primario text not null default '#152F4A',
+  color_fondo text not null default '#F7F3EA',
+  fuente_body text not null default 'Inter',
+  updated_at timestamptz not null default now(),
+  constraint solo_una_fila check (id = 1)
+);
+
+insert into public.configuracion_sitio (id) values (1) on conflict (id) do nothing;
+
+alter table public.configuracion_sitio enable row level security;
+
+drop policy if exists "config_select" on public.configuracion_sitio;
+create policy "config_select" on public.configuracion_sitio for select using (true);
+
+drop policy if exists "config_admin_write" on public.configuracion_sitio;
+create policy "config_admin_write" on public.configuracion_sitio for update
+  using (public.mi_rol() = 'admin') with check (public.mi_rol() = 'admin');

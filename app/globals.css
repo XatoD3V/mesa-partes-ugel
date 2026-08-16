@@ -7,7 +7,8 @@
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-papel text-tinta-950 font-body antialiased;
+    @apply bg-papel text-tinta-950 antialiased;
+    font-family: var(--font-body-override, var(--font-body)), system-ui, sans-serif;
   }
   h1, h2, h3, h4 {
     @apply font-display;

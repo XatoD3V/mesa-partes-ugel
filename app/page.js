@@ -1,11 +1,32 @@
 import Link from "next/link";
-import { FileText, Search, ShieldCheck, Building2, ArrowRight, Clock, Users } from "lucide-react";
+import { FileText, Search, ShieldCheck, Building2, ArrowRight, Clock, Users, Megaphone, MessageCircle } from "lucide-react";
+import { supabaseServer } from "@/lib/supabaseServer";
 
 const nombreUgel = process.env.NEXT_PUBLIC_NOMBRE_UGEL || "UGEL";
 
-export default function Home() {
+export default async function Home() {
+  const supabase = supabaseServer();
+  const { data: avisos } = await supabase
+    .from("avisos")
+    .select("*")
+    .eq("activo", true)
+    .order("created_at", { ascending: false });
+
   return (
     <main className="min-h-screen">
+      {/* Avisos / banners publicados por el administrador */}
+      {(avisos || []).map((a) => (
+        <div
+          key={a.id}
+          className={`flex items-center justify-center gap-2 px-6 py-2.5 text-center text-sm font-medium ${
+            a.tipo === "urgente" ? "bg-sello text-papel-100" : "bg-tinta-900 text-papel-100"
+          }`}
+        >
+          <Megaphone size={15} className="shrink-0" />
+          <span>{a.mensaje}</span>
+        </div>
+      ))}
+
       {/* Encabezado */}
       <header className="border-b border-tinta-900/10">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
@@ -166,8 +187,21 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="border-t border-tinta-900/10 py-8 text-center text-xs text-tinta-600">
-        Mesa de Partes Virtual · {nombreUgel} · Sistema de gestión documentaria
+      <footer className="border-t border-tinta-900/10 py-8 text-center">
+        <p className="text-xs text-tinta-600">
+          Mesa de Partes Virtual · {nombreUgel} · Sistema de gestión documentaria
+        </p>
+        <p className="mt-2 flex items-center justify-center gap-1.5 text-xs text-tinta-600">
+          Desarrollado por <strong className="text-tinta-800">Xato D3v</strong>
+          <a
+            href="https://wa.me/519144733921"
+            target="_blank"
+            rel="noreferrer"
+            className="ml-1 inline-flex items-center gap-1 text-salvia hover:underline"
+          >
+            <MessageCircle size={13} /> +51 914 473 3921
+          </a>
+        </p>
       </footer>
     </main>
   );

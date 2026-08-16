@@ -1,5 +1,6 @@
 import { Lora, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import ThemeProvider from "@/components/ThemeProvider";
 
 const display = Lora({
   subsets: ["latin"],
@@ -31,6 +32,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="es">
       <body className={`${display.variable} ${body.variable} ${mono.variable} bg-papel bg-grain`}>
+        <ThemeProvider />
         {children}
       </body>
     </html>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabaseBrowser } from "@/lib/supabaseClient";
 import { ROLES, iniciales } from "@/lib/constants";
-import { Search, AlertCircle, CheckCircle2, UserPlus, X } from "lucide-react";
+import { Search, AlertCircle, CheckCircle2, UserPlus, X, Trash2 } from "lucide-react";
 
 export default function UsuariosPage() {
   const supabase = supabaseBrowser();
@@ -26,6 +26,8 @@ export default function UsuariosPage() {
     rol: "jefe_oficina",
     oficina_id: "",
   });
+  const [miId, setMiId] = useState(null);
+  const [eliminandoId, setEliminandoId] = useState(null);
 
   async function cargar() {
     setCargando(true);
@@ -40,6 +42,7 @@ export default function UsuariosPage() {
 
   useEffect(() => {
     cargar();
+    supabase.auth.getUser().then(({ data }) => setMiId(data?.user?.id || null));
   }, []);
 
   async function actualizar(id, cambios) {
@@ -77,6 +80,28 @@ export default function UsuariosPage() {
     setOk("Usuario creado correctamente");
     setTimeout(() => setOk(""), 2500);
     cargar();
+  }
+
+  async function eliminarUsuario(u) {
+    if (!window.confirm(`¿Eliminar definitivamente la cuenta de ${u.nombres} ${u.apellidos}?\n\nEsta acción no se puede deshacer.`)) {
+      return;
+    }
+    setError("");
+    setEliminandoId(u.id);
+    const res = await fetch("/api/admin/eliminar-usuario", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: u.id }),
+    });
+    const data = await res.json();
+    setEliminandoId(null);
+    if (!res.ok) {
+      setError(data.error || "No se pudo eliminar el usuario.");
+      return;
+    }
+    setUsuarios((prev) => prev.filter((x) => x.id !== u.id));
+    setOk("Usuario eliminado correctamente");
+    setTimeout(() => setOk(""), 2500);
   }
 
   const filtrados = usuarios.filter((u) =>
@@ -219,6 +244,16 @@ export default function UsuariosPage() {
                   <option key={o.id} value={o.id}>{o.nombre}</option>
                 ))}
               </select>
+              {u.id !== miId && (
+                <button
+                  onClick={() => eliminarUsuario(u)}
+                  disabled={eliminandoId === u.id}
+                  title="Eliminar usuario"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-tinta-500 hover:bg-sello-100 hover:text-sello disabled:opacity-50"
+                >
+                  <Trash2 size={16} />
+                </button>
+              )}
             </div>
           </div>
         ))}

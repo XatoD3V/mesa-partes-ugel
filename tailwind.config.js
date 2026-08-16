@@ -10,7 +10,7 @@ module.exports = {
         // Paleta "Legajo": tinta institucional + papel + sello
         tinta: {
           950: "#0E2238",
-          900: "#152F4A",
+          900: "var(--color-brand, #152F4A)",
           800: "#1C3D5F",
           700: "#274E76",
           600: "#33608F",
@@ -19,7 +19,7 @@ module.exports = {
           50: "#F2F6FA",
         },
         papel: {
-          DEFAULT: "#F7F3EA",
+          DEFAULT: "var(--color-bg, #F7F3EA)",
           100: "#FBF9F4",
           200: "#EFE8D8",
           300: "#E3D9C1",
