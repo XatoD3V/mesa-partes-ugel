@@ -51,14 +51,14 @@ export default function ConsultaPage() {
             Consultar estado de expediente
           </h1>
           <p className="mt-1 text-sm text-tinta-700">
-            Ingresa el código que recibiste al registrar tu documento. Ejemplo: UGEL-2026-000123
+            Ingresa el código que recibiste al registrar tu documento. Ejemplo: EXP-2026-000123
           </p>
 
           <form onSubmit={buscar} className="mt-5 flex gap-2">
             <input
               required
               className="input-legajo font-mono"
-              placeholder="UGEL-2026-000123"
+              placeholder="EXP-2026-000000"
               value={codigo}
               onChange={(e) => setCodigo(e.target.value)}
             />
