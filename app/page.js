@@ -94,7 +94,7 @@ export default async function Home() {
                 <p className="text-xs text-tinta-700">Oficinas conectadas</p>
               </div>
               <div>
-                <p className="font-display text-2x1 font-semibold text-tinta-950">24 Hrs</p>
+                <p className="font-display text-3x1 font-semibold text-tinta-950">24 Hrs</p>
                 <p className="text-xs text-tinta-700">Registro de documentos</p>
               </div>
               <div>
