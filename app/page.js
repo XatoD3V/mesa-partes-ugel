@@ -94,7 +94,7 @@ export default async function Home() {
                 <p className="text-xs text-tinta-700">Oficinas conectadas</p>
               </div>
               <div>
-                <p className="font-display text-2x1 font-semibold text-tinta-950">24/7</p>
+                <p className="font-display text-2x1 font-semibold text-tinta-950">24 Hrs</p>
                 <p className="text-xs text-tinta-700">Registro de documentos</p>
               </div>
               <div>
@@ -108,8 +108,8 @@ export default async function Home() {
           <div className="card-folio relative mx-auto w-full max-w-sm p-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-xs uppercase tracking-wide text-tinta-600">Expediente</p>
-                <p className="font-mono text-lg font-semibold text-tinta-950">UGEL-2026-004821</p>
+                <p className="text-xs uppercase tracking-wide text-tinta-600">Expediente - Ejemplo</p>
+                <p className="font-mono text-lg font-semibold text-tinta-950">EXP-2026-004821</p>
               </div>
               <span className="badge bg-ambar-100 text-ambar">
                 <span className="h-1.5 w-1.5 rounded-full bg-ambar" />
