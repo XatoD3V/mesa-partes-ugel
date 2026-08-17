@@ -14,6 +14,7 @@ import {
   RotateCcw,
   ImageIcon,
   Hash,
+  Clock,
 } from "@/components/icons";
 
 const FUENTES_DISPONIBLES = ["Inter", "Roboto", "Poppins", "Merriweather", "Nunito", "Source Sans 3"];
@@ -38,6 +39,9 @@ export default function ConfiguracionPage() {
     fuente_body: "Inter",
     favicon_url: "",
     prefijo_expediente: "UGEL",
+    horario_activo: false,
+    horario_inicio: "08:00",
+    horario_fin: "18:00",
   });
   const [subiendoFavicon, setSubiendoFavicon] = useState(false);
   const [reiniciandoNumero, setReiniciandoNumero] = useState(false);
@@ -66,7 +70,13 @@ export default function ConfiguracionPage() {
         supabase.from("configuracion_sitio").select("*").eq("id", 1).single(),
       ]);
       setAvisos(av || []);
-      if (cfg) setConfig(cfg);
+      if (cfg) {
+        setConfig({
+          ...cfg,
+          horario_inicio: (cfg.horario_inicio || "08:00").slice(0, 5),
+          horario_fin: (cfg.horario_fin || "18:00").slice(0, 5),
+        });
+      }
       setCargando(false);
     })();
   }, []);
@@ -114,6 +124,31 @@ export default function ConfiguracionPage() {
       .eq("id", 1);
     if (error) return setError(error.message);
     flashOk("Apariencia actualizada. Recarga la página para verla aplicada en todo el sitio.");
+  }
+
+  // ---- Horario de acceso (solo usuarios externos) ----
+  const [guardandoHorario, setGuardandoHorario] = useState(false);
+
+  async function guardarHorario(e) {
+    e.preventDefault();
+    setError("");
+    if (config.horario_activo && config.horario_inicio === config.horario_fin) {
+      setError("La hora de inicio y de fin no pueden ser iguales.");
+      return;
+    }
+    setGuardandoHorario(true);
+    const { error } = await supabase
+      .from("configuracion_sitio")
+      .update({
+        horario_activo: config.horario_activo,
+        horario_inicio: config.horario_inicio,
+        horario_fin: config.horario_fin,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", 1);
+    setGuardandoHorario(false);
+    if (error) return setError(error.message);
+    flashOk("Horario de acceso actualizado.");
   }
 
   async function subirFavicon(e) {
@@ -349,6 +384,64 @@ export default function ConfiguracionPage() {
             </button>
           </div>
         </div>
+      </section>
+
+      {/* Horario de acceso */}
+      <section className="card-folio p-6">
+        <div className="flex items-center gap-2">
+          <Clock className="text-tinta-800" size={20} />
+          <h2 className="font-display text-lg font-semibold text-tinta-950">Horario de acceso de usuarios externos</h2>
+        </div>
+        <p className="mt-1 text-sm text-tinta-700">
+          Restringe el horario en que los ciudadanos (usuarios externos) pueden iniciar sesión y enviar documentos.
+          El personal de la UGEL (Mesa de Partes, jefes de oficina y administradores) puede ingresar en cualquier momento.
+        </p>
+
+        <form onSubmit={guardarHorario} className="mt-4 space-y-4">
+          <label className="flex items-center gap-2.5 text-sm font-medium text-tinta-900">
+            <input
+              type="checkbox"
+              className="h-4 w-4 rounded border-tinta-800/30 text-tinta-900 focus:ring-tinta-700/30"
+              checked={config.horario_activo}
+              onChange={(e) => setConfig({ ...config, horario_activo: e.target.checked })}
+            />
+            Restringir el horario de ingreso a usuarios externos
+          </label>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="label-legajo">Hora de inicio</label>
+              <input
+                type="time"
+                disabled={!config.horario_activo}
+                className="input-legajo disabled:opacity-50"
+                value={config.horario_inicio}
+                onChange={(e) => setConfig({ ...config, horario_inicio: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="label-legajo">Hora de fin</label>
+              <input
+                type="time"
+                disabled={!config.horario_activo}
+                className="input-legajo disabled:opacity-50"
+                value={config.horario_fin}
+                onChange={(e) => setConfig({ ...config, horario_fin: e.target.value })}
+              />
+            </div>
+          </div>
+
+          {config.horario_activo && (
+            <p className="text-xs text-tinta-600">
+              Fuera de este rango (hora de Perú), los usuarios externos verán un aviso y no podrán iniciar sesión
+              ni continuar con una sesión abierta.
+            </p>
+          )}
+
+          <button type="submit" disabled={guardandoHorario} className="btn-primario">
+            {guardandoHorario ? "Guardando..." : "Guardar horario"}
+          </button>
+        </form>
       </section>
 
       {/* Zona de peligro */}

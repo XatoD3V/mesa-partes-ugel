@@ -14,6 +14,7 @@ import {
   LogOut,
   FolderClock,
   Settings,
+  Archive,
 } from "@/components/icons";
 
 export default function Sidebar({ perfil, onNavigate, logoUrl }) {
@@ -33,6 +34,7 @@ export default function Sidebar({ perfil, onNavigate, logoUrl }) {
     { href: "/dashboard/reportes", label: "Reportes", icon: BarChart3, show: esPersonalUgel },
     { href: "/dashboard/oficinas", label: "Oficinas", icon: Building2, show: esAdmin },
     { href: "/dashboard/usuarios", label: "Usuarios", icon: Users, show: esAdmin },
+    { href: "/dashboard/historial-usuarios", label: "Historial de registros", icon: Archive, show: esAdmin },
     { href: "/dashboard/configuracion", label: "Configuración", icon: Settings, show: esAdmin },
   ];
 

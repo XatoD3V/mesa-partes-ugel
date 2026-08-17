@@ -69,7 +69,7 @@ export default async function Home() {
               Trámite 100% en línea
             </span>
             <h1 className="mt-5 font-display text-4xl font-semibold leading-[1.1] text-tinta-950 sm:text-5xl">
-              Presenta y sigue tus documentos ante la UNIDADES DE GESTION EDUCATIVA LOCAL - LORETO - NAUTA.
+              Presenta y sigue tus documentos ante la {nombreUgel} sin hacer cola.
             </h1>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-tinta-800">
               Registra tu solicitud, oficio o expediente, adjunta tus archivos y recibe un
@@ -94,12 +94,12 @@ export default async function Home() {
                 <p className="text-xs text-tinta-700">Oficinas conectadas</p>
               </div>
               <div>
-                <p className="font-display text-2xl font-semibold text-tinta-950">24 Hrs</p>
+                <p className="font-display text-2xl font-semibold text-tinta-950">24/7</p>
                 <p className="text-xs text-tinta-700">Registro de documentos</p>
               </div>
               <div>
-                <p className="font-display text-2xl font-semibold text-tinta-950">Verifica</p>
-                <p className="text-xs text-tinta-700">Seguimiento de documentos en Tiempo Real</p>
+                <p className="font-display text-2xl font-semibold text-tinta-950">Real</p>
+                <p className="text-xs text-tinta-700">Seguimiento en vivo</p>
               </div>
             </div>
           </div>
@@ -108,8 +108,8 @@ export default async function Home() {
           <div className="card-folio relative mx-auto w-full max-w-sm p-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-xs uppercase tracking-wide text-tinta-600">Expediente - Ejemplo</p>
-                <p className="font-mono text-lg font-semibold text-tinta-950">EXP-2026-004821</p>
+                <p className="text-xs uppercase tracking-wide text-tinta-600">Expediente</p>
+                <p className="font-mono text-lg font-semibold text-tinta-950">UGEL-2026-004821</p>
               </div>
               <span className="badge bg-ambar-100 text-ambar">
                 <span className="h-1.5 w-1.5 rounded-full bg-ambar" />
@@ -201,12 +201,12 @@ export default async function Home() {
         <p className="mt-2 flex items-center justify-center gap-1.5 text-xs text-tinta-600">
           Desarrollado por <strong className="text-tinta-800">Xato D3v</strong>
           <a
-            href="https://wa.me/51914473392"
+            href="https://wa.me/519144733921"
             target="_blank"
             rel="noreferrer"
             className="ml-1 inline-flex items-center gap-1 text-salvia hover:underline"
           >
-            <MessageCircle size={13} /> +51 914 473 392
+            <MessageCircle size={13} /> +51 914 473 3921
           </a>
         </p>
       </footer>

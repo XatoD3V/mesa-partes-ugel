@@ -6,6 +6,8 @@ import Link from "next/link";
 import { supabaseBrowser } from "@/lib/supabaseClient";
 import { Building2, LogIn, AlertCircle } from "@/components/icons";
 import SiteLogoLink from "@/components/SiteLogoLink";
+import PasswordInput from "@/components/PasswordInput";
+import { dentroDeHorarioExterno } from "@/lib/horario";
 
 export default function LoginPage() {
   return (
@@ -33,8 +35,8 @@ function LoginForm() {
       email,
       password,
     });
-    setCargando(false);
     if (error) {
+      setCargando(false);
       setError(
         error.message.includes("Invalid login")
           ? "Correo o contraseña incorrectos."
@@ -42,6 +44,28 @@ function LoginForm() {
       );
       return;
     }
+
+    // Si es un usuario externo, valida que esté dentro del horario permitido
+    // antes de dejarlo entrar (el personal de la UGEL no tiene esta restricción).
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const [{ data: perfil }, { data: config }] = await Promise.all([
+      supabase.from("perfiles").select("rol").eq("id", user.id).single(),
+      supabase.from("configuracion_sitio").select("horario_activo, horario_inicio, horario_fin").eq("id", 1).single(),
+    ]);
+
+    if (perfil?.rol === "externo" && !dentroDeHorarioExterno(config)) {
+      await supabase.auth.signOut();
+      setCargando(false);
+      const ini = (config.horario_inicio || "").slice(0, 5);
+      const fin = (config.horario_fin || "").slice(0, 5);
+      setError(`El sistema solo está disponible para usuarios externos de ${ini} a ${fin} (hora de Perú). Intenta más tarde.`);
+      return;
+    }
+
+    setCargando(false);
     router.push(params.get("redirect") || "/dashboard");
     router.refresh();
   }
@@ -69,8 +93,7 @@ function LoginForm() {
             </div>
             <div>
               <label className="label-legajo">Contraseña</label>
-              <input
-                type="password"
+              <PasswordInput
                 required
                 className="input-legajo"
                 value={password}

@@ -599,3 +599,12 @@ end;
 $$;
 
 grant execute on function public.reiniciar_correlativo_expediente() to authenticated;
+
+-- ============================================================================
+-- HORARIO DE ACCESO para usuarios externos (ciudadanos). El personal de la
+-- UGEL (mesa_partes, jefe_oficina, admin) nunca se ve afectado por esto.
+-- ============================================================================
+alter table public.configuracion_sitio add column if not exists horario_activo boolean not null default false;
+alter table public.configuracion_sitio add column if not exists horario_inicio time not null default '08:00';
+alter table public.configuracion_sitio add column if not exists horario_fin time not null default '18:00';
+

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabaseClient";
 import { TIPOS_DOCUMENTO } from "@/lib/constants";
 import { UploadCloud, Send, AlertCircle, CheckCircle2 } from "@/components/icons";
+import BotonComprobante from "@/components/ComprobanteExpediente";
 
 export default function NuevoDocumentoPage() {
   const supabase = supabaseBrowser();
@@ -83,10 +84,17 @@ export default function NuevoDocumentoPage() {
           archivo_url,
           archivo_nombre,
         })
-        .select("id, codigo_expediente")
+        .select("id, codigo_expediente, asunto, tipo_documento, prioridad, numero_folios, created_at")
         .single();
 
       if (insertError) throw insertError;
+
+      // Datos del emisor y de la oficina, para el comprobante imprimible
+      const [{ data: perfilEmisor }] = await Promise.all([
+        supabase.from("perfiles").select("nombres, apellidos, numero_documento").eq("id", user.id).single(),
+      ]);
+      const oficinaDestinoNombre =
+        oficinas.find((o) => o.id === form.oficina_destino_id)?.nombre || "Mesa de Partes";
 
       // Avisa por correo al personal de la oficina que lo recibe (no bloquea el flujo si falla)
       fetch("/api/notificaciones/enviar-correo", {
@@ -107,7 +115,13 @@ export default function NuevoDocumentoPage() {
         });
       }
 
-      setExito(doc);
+      setExito({
+        ...doc,
+        oficina_nombre: oficinaDestinoNombre,
+        emisor_nombre: `${perfilEmisor?.nombres || ""} ${perfilEmisor?.apellidos || ""}`.trim(),
+        emisor_documento: perfilEmisor?.numero_documento,
+        nombreUgel: process.env.NEXT_PUBLIC_NOMBRE_UGEL || "UGEL",
+      });
     } catch (err) {
       setError(err.message || "Ocurrió un error al registrar el documento.");
     } finally {
@@ -130,10 +144,11 @@ export default function NuevoDocumentoPage() {
           <p className="mt-2 text-xs text-tinta-600">
             Guárdalo para hacer seguimiento a tu trámite en cualquier momento.
           </p>
-          <div className="mt-6 flex justify-center gap-3">
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
             <button onClick={() => router.push(`/dashboard/documento/${exito.id}`)} className="btn-primario">
               Ver mi expediente
             </button>
+            <BotonComprobante datos={exito} />
             <button onClick={() => router.push("/dashboard/nuevo-documento")} className="btn-secundario">
               Enviar otro
             </button>

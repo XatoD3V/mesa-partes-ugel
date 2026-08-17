@@ -6,6 +6,7 @@ import Link from "next/link";
 import { supabaseBrowser } from "@/lib/supabaseClient";
 import { Building2, UserPlus, AlertCircle, CheckCircle2 } from "@/components/icons";
 import SiteLogoLink from "@/components/SiteLogoLink";
+import PasswordInput from "@/components/PasswordInput";
 
 export default function RegistroPage() {
   const router = useRouter();
@@ -121,7 +122,7 @@ export default function RegistroPage() {
               </div>
               <div>
                 <label className="label-legajo">Teléfono</label>
-                <input className="input-legajo" value={form.telefono} onChange={(e) => update("telefono", e.target.value)} />
+                <input required className="input-legajo" value={form.telefono} onChange={(e) => update("telefono", e.target.value)} />
               </div>
             </div>
             <div>
@@ -130,7 +131,7 @@ export default function RegistroPage() {
             </div>
             <div>
               <label className="label-legajo">Contraseña</label>
-              <input type="password" required minLength={6} className="input-legajo" value={form.password} onChange={(e) => update("password", e.target.value)} />
+              <PasswordInput required minLength={6} className="input-legajo" value={form.password} onChange={(e) => update("password", e.target.value)} placeholder="Mínimo 6 caracteres" />
             </div>
 
             {error && (
