@@ -69,7 +69,7 @@ export default async function Home() {
               Trámite 100% en línea
             </span>
             <h1 className="mt-5 font-display text-4xl font-semibold leading-[1.1] text-tinta-950 sm:text-5xl">
-              Presenta y sigue tus documentos ante la {nombreUgel} sin hacer cola.
+              Presenta y sigue tus documentos ante la UNIDADES DE GESTION EDUCATIVA LOCAL - LORETO - NAUTA.
             </h1>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-tinta-800">
               Registra tu solicitud, oficio o expediente, adjunta tus archivos y recibe un
@@ -94,12 +94,12 @@ export default async function Home() {
                 <p className="text-xs text-tinta-700">Oficinas conectadas</p>
               </div>
               <div>
-                <p className="font-display text-2xl font-semibold text-tinta-950">24/7</p>
+                <p className="font-display text-2xl font-semibold text-tinta-950">Horarios flexibles</p>
                 <p className="text-xs text-tinta-700">Registro de documentos</p>
               </div>
               <div>
-                <p className="font-display text-2xl font-semibold text-tinta-950">Real</p>
-                <p className="text-xs text-tinta-700">Seguimiento en vivo</p>
+                <p className="font-display text-2xl font-semibold text-tinta-950">Verifica</p>
+                <p className="text-xs text-tinta-700">Seguimiento de documentos en Tiempo Real</p>
               </div>
             </div>
           </div>
@@ -201,12 +201,12 @@ export default async function Home() {
         <p className="mt-2 flex items-center justify-center gap-1.5 text-xs text-tinta-600">
           Desarrollado por <strong className="text-tinta-800">Xato D3v</strong>
           <a
-            href="https://wa.me/519144733921"
+            href="https://wa.me/51914473392"
             target="_blank"
             rel="noreferrer"
             className="ml-1 inline-flex items-center gap-1 text-salvia hover:underline"
           >
-            <MessageCircle size={13} /> +51 914 473 3921
+            <MessageCircle size={13} /> +51 914 473 392
           </a>
         </p>
       </footer>
