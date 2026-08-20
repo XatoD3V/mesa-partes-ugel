@@ -197,15 +197,20 @@ language plpgsql
 security definer set search_path = public
 as $$
 begin
-  insert into public.perfiles (id, nombres, apellidos, email, rol)
+  insert into public.perfiles (id, nombres, apellidos, email, numero_documento, telefono, tipo_documento, rol)
   values (
     new.id,
     coalesce(new.raw_user_meta_data->>'nombres', 'Usuario'),
     coalesce(new.raw_user_meta_data->>'apellidos', ''),
     new.email,
+    nullif(new.raw_user_meta_data->>'numero_documento', ''),
+    nullif(new.raw_user_meta_data->>'telefono', ''),
+    coalesce(nullif(new.raw_user_meta_data->>'tipo_documento', ''), 'DNI'),
     'externo'
   )
-  on conflict (id) do nothing;
+  on conflict (id) do update set
+    numero_documento = coalesce(public.perfiles.numero_documento, excluded.numero_documento),
+    telefono = coalesce(public.perfiles.telefono, excluded.telefono);
   return new;
 end;
 $$;

@@ -33,7 +33,8 @@ async function construirPDF(datos) {
   doc.setTextColor(178, 58, 46);
   doc.text(datos.codigo_expediente, 14, 50);
 
-  // Detalle en filas etiqueta/valor
+  // Detalle en filas etiqueta/valor. Cada fila mide su propia altura según
+  // cuántas líneas ocupe el valor al envolverse, para que nunca se superpongan.
   const filas = [
     ["Asunto", datos.asunto],
     ["Tipo de documento", datos.tipo_documento],
@@ -46,14 +47,18 @@ async function construirPDF(datos) {
     ["Hora de registro", hora],
   ];
 
+  const ANCHO_VALOR = 130;
+  const ALTO_LINEA = 5.5;
+
   let y = 63;
   doc.setFontSize(10.5);
   filas.forEach(([etiqueta, valor]) => {
+    const lineas = doc.splitTextToSize(String(valor || "—"), ANCHO_VALOR);
     doc.setTextColor(90, 90, 90);
     doc.text(`${etiqueta}:`, 14, y);
     doc.setTextColor(20, 20, 20);
-    doc.text(String(valor || "—"), 65, y, { maxWidth: 130 });
-    y += 9;
+    doc.text(lineas, 65, y);
+    y += Math.max(lineas.length, 1) * ALTO_LINEA + 3.5;
   });
 
   y += 6;
